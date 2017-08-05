@@ -2,9 +2,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-#ifndef SCREEN_H
 #include "screen.h"
-#endif
 
 int
 scr_get_cursor_pos(int *rows, int *cols)

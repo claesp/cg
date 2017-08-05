@@ -17,6 +17,7 @@ clang \
 	-O0 \
 	-o ../out/dbg/cg \
 	../src/screen.c \
+	../src/input.c \
 	../src/cg.c \
 
 clang \
@@ -24,4 +25,5 @@ clang \
 	-O2 \
 	-o ../out/rel/cg \
 	../src/screen.c \
+	../src/input.c \
 	../src/cg.c \
