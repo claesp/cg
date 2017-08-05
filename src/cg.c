@@ -17,13 +17,17 @@ struct config {
 };
 
 const char *VERSION = "0.0.1";
+
+const char *ESC_CLR    = "\x1b[2J";  /* clear screen */
+const char *ESC_CUR_TL = "\x1b[H";   /* move cursor top-left */
+
 struct config ECFG;
 
 void
 die(const char *s)
 {
-	write(STDOUT_FILENO, "\x1b[2J", 4);
-	write(STDOUT_FILENO, "\x1b[H", 3);
+	write(STDOUT_FILENO, ESC_CLR, 4);
+	write(STDOUT_FILENO, ESC_CUR_TL, 3);
 	perror(s);
 	exit(1);
 }
@@ -33,7 +37,11 @@ draw_rows(void)
 {
 	int y = 0;
 	for (y = 0; y < ECFG.rows; y++) {
-		write(STDOUT_FILENO, "~\r\n", 3);
+		write(STDOUT_FILENO, "~", 1);
+
+		if (y < ECFG.rows - 1) {
+			write(STDOUT_FILENO, "\r\n", 2);
+		}
 	}
 }
 
@@ -94,8 +102,8 @@ input(void)
 
 	switch (c) {
 		case KEY_CTRL('q'):
-			write(STDOUT_FILENO, "\x1b[2J", 4);
-			write(STDOUT_FILENO, "\x1b[H", 3);
+			write(STDOUT_FILENO, ESC_CLR, 4);
+			write(STDOUT_FILENO, ESC_CUR_TL, 3);
 			exit(0);
 			break;
 	}
@@ -175,12 +183,12 @@ read_loop(void)
 void
 refresh(void)
 {
-	write(STDOUT_FILENO, "\x1b[2J", 4); /* clear screen */
-	write(STDOUT_FILENO, "\x1b[H", 3);  /* move cursor to top-left */
+	write(STDOUT_FILENO, ESC_CLR, 4);
+	write(STDOUT_FILENO, ESC_CUR_TL, 3);
 
 	draw_rows();
 
-	write(STDOUT_FILENO, "\x1b[H", 3);
+	write(STDOUT_FILENO, ESC_CUR_TL, 3);
 }
 
 void
