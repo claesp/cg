@@ -2,6 +2,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+#include "buffer.h"
 #include "output.h"
 #include "screen.h"
 
@@ -51,10 +52,17 @@ scr_get_win_size(int *rows, int *cols)
 void
 scr_refresh(void)
 {
-    write(STDOUT_FILENO, SCR_ESC_CLR, 4);
-    write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
+	cgbuf buf = CGBUF_INIT;
 
-    out_draw_rows();
+	buf_append(&buf, SCR_ESC_CUR_HIDE, 6);
+	buf_append(&buf, SCR_ESC_CLR, 4);
+	buf_append(&buf, SCR_ESC_CUR_TL, 3);
 
-    write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
+    out_draw_rows(&buf);
+
+	buf_append(&buf, SCR_ESC_CUR_TL, 3);
+	buf_append(&buf, SCR_ESC_CUR_SHOW, 6);
+
+	write(STDOUT_FILENO, buf.b, buf.len);
+	buf_free(&buf);
 }

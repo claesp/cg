@@ -1,4 +1,6 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
-void out_draw_rows(void);
+#include "buffer.h"
+
+void out_draw_rows(cgbuf *buf);
 #endif
