@@ -1,8 +1,10 @@
 #include <stdio.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
 #include "buffer.h"
+#include "cg.h"
 #include "output.h"
 #include "screen.h"
 
@@ -59,7 +61,11 @@ scr_refresh(void)
 
     out_draw_rows(&buf);
 
-	buf_append(&buf, SCR_ESC_CUR_TL, 3);
+	/* move cursor to correct position */
+	char b[32];
+	snprintf(b, sizeof(b), "\x1b[%d;%dH", ECFG.cy + 1, ECFG.cx + 1);
+	buf_append(&buf, b, strlen(b));
+
 	buf_append(&buf, SCR_ESC_CUR_SHOW, 6);
 
 	write(STDOUT_FILENO, buf.b, buf.len);

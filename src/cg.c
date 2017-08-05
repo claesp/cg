@@ -35,6 +35,9 @@ edit_loop(void)
 void
 init_editor(void)
 {
+	ECFG.cx = 0;
+	ECFG.cy = 0;
+
 	if (scr_get_win_size(&ECFG.rows, &ECFG.cols) == -1)
 		die("scr_get_win_size");
 }

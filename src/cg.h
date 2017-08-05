@@ -3,6 +3,7 @@
 #include <termios.h>
 
 struct config {
+	int cx, cy;
 	int rows;
 	int cols;
 	struct termios init_term;

@@ -19,6 +19,15 @@ inp_command(void)
             write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
             exit(0);
             break;
+		case 'w':
+			/* FALLTHROUGH */
+		case 's':
+			/* FALLTHROUGH */
+		case 'a':
+			/* FALLTHROUGH */
+		case 'd':
+			inp_move_cur(c);
+			break;
     }
 }
 
@@ -46,6 +55,25 @@ inp_enable_raw(void)
 
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &r) == -1)
         die("tcsetattr");
+}
+
+void
+inp_move_cur(char key)
+{
+	switch (key) {
+		case 'a':
+			ECFG.cx--;
+			break;
+		case 'd':
+			ECFG.cx++;
+			break;
+		case 'w':
+			ECFG.cy--;
+			break;
+		case 's':
+			ECFG.cy++;
+			break;
+	}
 }
 
 char
