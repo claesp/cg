@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
-#include <termios.h>
 #include <unistd.h>
 
 #include "cg.h"
 #include "input.h"
+#include "output.h"
 #include "screen.h"
 
 const char *VERSION = "0.0.1";
@@ -18,19 +18,6 @@ die(const char *s)
 	write(STDOUT_FILENO, ESC_CUR_TL, 3);
 	perror(s);
 	exit(1);
-}
-
-void
-draw_rows(void)
-{
-	int y = 0;
-	for (y = 0; y < ECFG.rows; y++) {
-		write(STDOUT_FILENO, "~", 1);
-
-		if (y < ECFG.rows - 1) {
-			write(STDOUT_FILENO, "\r\n", 2);
-		}
-	}
 }
 
 void
@@ -78,7 +65,7 @@ refresh(void)
 	write(STDOUT_FILENO, ESC_CLR, 4);
 	write(STDOUT_FILENO, ESC_CUR_TL, 3);
 
-	draw_rows();
+	out_draw_rows();
 
 	write(STDOUT_FILENO, ESC_CUR_TL, 3);
 }

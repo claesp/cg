@@ -1,5 +1,7 @@
 #ifndef CG_H
 #define CG_H
+#include <termios.h>
+
 struct config {
 	int rows;
 	int cols;
