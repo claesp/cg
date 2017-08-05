@@ -16,10 +16,12 @@ clang \
 	-Wall \
 	-O0 \
 	-o ../out/dbg/cg \
-	../src/cg.c
+	../src/screen.c \
+	../src/cg.c \
 
 clang \
 	-Wall \
 	-O2 \
 	-o ../out/rel/cg \
-	../src/cg.c
+	../src/screen.c \
+	../src/cg.c \
