@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
@@ -6,40 +7,27 @@
 
 #include "cg.h"
 
-char *VERSION = "0.0.1";
+#define KEY_CTRL(k) ((k) & 0x1f)
+
+const char *VERSION = "0.0.1";
 struct termios bkterm;
 
 void
-d_rawmode(void)
+die(const char *s)
 {
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &bkterm);
-}
-
-void
-e_rawmode(void)
-{
-	tcgetattr(STDIN_FILENO, &bkterm);
-	atexit(d_rawmode);
-
-	struct termios r = bkterm;
-	r.c_iflag &= ~(ICRNL | IXON);
-	r.c_oflag &= ~(OPOST);
-	r.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &r);
+	perror(s);
+	exit(1);
 }
 
 void
 input(void)
 {
-	e_rawmode();
+	char c = read_key();
 
-	char c;
-	while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
-		if (iscntrl(c)) {
-			printf("%d\r\n", c);
-		} else {
-			printf("%d ('%c')\r\n", c, c);
-		}
+	switch (c) {
+		case KEY_CTRL('q'):
+			exit(0);
+			break;
 	}
 }
 
@@ -58,9 +46,66 @@ main(int argc, char *argv[])
 		}
 	}
 
-	input();
+	read_loop();
 
 	return 0;
+}
+
+void
+rawmode_off(void)
+{
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &bkterm);
+}
+
+void
+rawmode_on(void)
+{
+	if (tcgetattr(STDIN_FILENO, &bkterm) == -1)
+		die("tcgetattr");
+	atexit(rawmode_off);
+
+	struct termios r = bkterm;
+	r.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+	r.c_oflag &= ~(OPOST);
+	r.c_cflag |= (CS8);
+	r.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+	r.c_cc[VMIN] = 0;
+	r.c_cc[VTIME] = 1;
+
+	if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &r) == -1)
+		die("tcsetattr");
+}
+
+char
+read_key(void)
+{
+	int n;
+	char c;
+
+	while ((n = read(STDIN_FILENO, &c, 1)) != 1) {
+		if (n == -1 && errno != EAGAIN)
+			die("read");
+	}
+
+	return c;
+}
+
+void
+read_loop(void)
+{
+	rawmode_on();
+
+	while(1) {
+		refresh();
+		input();
+	}
+}
+
+void
+refresh(void)
+{
+	write(STDOUT_FILENO, "\x1b[2J", 4); /* clear screen */
+	write(STDOUT_FILENO, "\x1b[H", 3);  /* move cursor to top-left */
 }
 
 void
