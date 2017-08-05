@@ -1,5 +1,0 @@
-cg - Documentation
-------------------
-1) How to use
-
-Start the program with 'cg'.
