@@ -14,8 +14,8 @@ struct config ECFG;
 void
 die(const char *s)
 {
-	write(STDOUT_FILENO, ESC_CLR, 4);
-	write(STDOUT_FILENO, ESC_CUR_TL, 3);
+	write(STDOUT_FILENO, SCR_ESC_CLR, 4);
+	write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
 	perror(s);
 	exit(1);
 }
@@ -62,12 +62,12 @@ main(int argc, char *argv[])
 void
 refresh(void)
 {
-	write(STDOUT_FILENO, ESC_CLR, 4);
-	write(STDOUT_FILENO, ESC_CUR_TL, 3);
+	write(STDOUT_FILENO, SCR_ESC_CLR, 4);
+	write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
 
 	out_draw_rows();
 
-	write(STDOUT_FILENO, ESC_CUR_TL, 3);
+	write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
 }
 
 void

@@ -15,8 +15,8 @@ inp_command(void)
 
     switch (c) {
         case KEY_CTRL('q'):
-            write(STDOUT_FILENO, ESC_CLR, 4);
-            write(STDOUT_FILENO, ESC_CUR_TL, 3);
+            write(STDOUT_FILENO, SCR_ESC_CLR, 4);
+            write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
             exit(0);
             break;
     }
