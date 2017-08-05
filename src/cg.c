@@ -79,7 +79,7 @@ get_win_size(int *rows, int *cols)
 {
 	struct winsize ws;
 
-	if (1 || ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
+	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
 		if (write(STDOUT_FILENO, ESC_CUR_BR, 12) != 12)
 			return -1;
 		return get_cursor_pos(rows, cols);
