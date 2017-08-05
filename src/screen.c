@@ -55,7 +55,6 @@ scr_refresh(void)
 	cgbuf buf = CGBUF_INIT;
 
 	buf_append(&buf, SCR_ESC_CUR_HIDE, 6);
-	buf_append(&buf, SCR_ESC_CLR, 4);
 	buf_append(&buf, SCR_ESC_CUR_TL, 3);
 
     out_draw_rows(&buf);
