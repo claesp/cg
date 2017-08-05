@@ -1,13 +1,25 @@
 #!/bin/sh
-if [ ! -d ../out/ ]; then
-	mkdir -p ../out/
+if [ ! -d ../out/dbg/ ]; then
+	mkdir -p ../out/dbg/
 fi
-if [ -f ../out/cg ]; then
-	rm ../out/cg
+if [ ! -d ../out/rel/ ]; then
+	mkdir -p ../out/rel/
+fi
+if [ -f ../out/dbg/cg ]; then
+	rm ../out/dbg/cg
+fi
+if [ -f ../out/rel/cg ]; then
+	rm ../out/rel/cg
 fi
 
 clang \
 	-Wall \
 	-O0 \
-	-o ../out/cg \
+	-o ../out/dbg/cg \
+	../src/cg.c
+
+clang \
+	-Wall \
+	-O2 \
+	-o ../out/rel/cg \
 	../src/cg.c

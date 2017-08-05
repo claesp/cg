@@ -18,9 +18,10 @@ struct config {
 
 const char *VERSION = "0.0.1";
 
-const char *ESC_CLR     = "\x1b[2J"; /* clear screen */
-const char *ESC_CUR_TL  = "\x1b[H";  /* move cursor top-left */
-const char *ESC_CUR_POS = "\x1b[6n"; /* get cursor position */
+const char *ESC_CLR     = "\x1b[2J";            /* clear screen */
+const char *ESC_CUR_TL  = "\x1b[H";             /* move cursor top-left */
+const char *ESC_CUR_POS = "\x1b[6n";            /* get cursor position */
+const char *ESC_CUR_BR  = "\x1b[999C\x1b[999B"; /* move cursor bottom-right-ish */
 
 struct config ECFG;
 
@@ -78,8 +79,8 @@ get_win_size(int *rows, int *cols)
 {
 	struct winsize ws;
 
-	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
-		if (write(STDOUT_FILENO, "\x1b[999C\x1b[999B", 12) != 12)
+	if (1 || ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
+		if (write(STDOUT_FILENO, ESC_CUR_BR, 12) != 12)
 			return -1;
 		return get_cursor_pos(rows, cols);
 	} else {
