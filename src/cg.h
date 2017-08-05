@@ -7,6 +7,7 @@ struct config {
 	int cols;
 	struct termios init_term;
 };
+extern const char *VERSION;
 extern struct config ECFG;
 
 void die(const char *s);
