@@ -8,4 +8,5 @@
 
 int scr_get_cursor_pos(int *rows, int *cols);
 int scr_get_win_size(int *rows, int *cols);
+void scr_refresh(void);
 #endif

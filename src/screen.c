@@ -2,6 +2,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+#include "output.h"
 #include "screen.h"
 
 int
@@ -45,4 +46,15 @@ scr_get_win_size(int *rows, int *cols)
         *cols = ws.ws_col;
         return 0;
     }
+}
+
+void
+scr_refresh(void)
+{
+    write(STDOUT_FILENO, SCR_ESC_CLR, 4);
+    write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
+
+    out_draw_rows();
+
+    write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
 }

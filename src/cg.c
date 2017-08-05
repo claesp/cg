@@ -27,7 +27,7 @@ edit_loop(void)
 	inp_enable_raw();
 
 	while(1) {
-		refresh();
+		scr_refresh();
 		inp_command();
 	}
 }
@@ -36,7 +36,7 @@ void
 init_editor(void)
 {
 	if (scr_get_win_size(&ECFG.rows, &ECFG.cols) == -1)
-		die("get_win_size");
+		die("scr_get_win_size");
 }
 
 int
@@ -57,17 +57,6 @@ main(int argc, char *argv[])
 	edit_loop();
 
 	return 0;
-}
-
-void
-refresh(void)
-{
-	write(STDOUT_FILENO, SCR_ESC_CLR, 4);
-	write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
-
-	out_draw_rows();
-
-	write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
 }
 
 void
