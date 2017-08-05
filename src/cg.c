@@ -18,8 +18,9 @@ struct config {
 
 const char *VERSION = "0.0.1";
 
-const char *ESC_CLR    = "\x1b[2J";  /* clear screen */
-const char *ESC_CUR_TL = "\x1b[H";   /* move cursor top-left */
+const char *ESC_CLR     = "\x1b[2J"; /* clear screen */
+const char *ESC_CUR_TL  = "\x1b[H";  /* move cursor top-left */
+const char *ESC_CUR_POS = "\x1b[6n"; /* get cursor position */
 
 struct config ECFG;
 
@@ -51,7 +52,7 @@ get_cursor_pos(int *rows, int *cols)
 	char buf[32];
 	unsigned int i = 0;
 
-	if (write(STDOUT_FILENO, "\x1b[6n", 4) != 4)
+	if (write(STDOUT_FILENO, ESC_CUR_POS, 4) != 4)
 		return -1;
 
 	while (i < sizeof(buf) - 1) {
@@ -132,7 +133,8 @@ main(int argc, char *argv[])
 void
 rawmode_off(void)
 {
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &ECFG.init_term);
+	if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &ECFG.init_term) == -1)
+		die("tcsetattr");
 }
 
 void
