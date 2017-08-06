@@ -68,16 +68,38 @@ inp_move_cur(int key)
 {
 	switch (key) {
 		case KEY_ARROW_LEFT:
-			ECFG.cx--;
+			if (ECFG.cx > 0) {
+				ECFG.cx--;
+			} else {
+				if (ECFG.cy > 0) {
+					ECFG.cx = ECFG.cols;
+					ECFG.cy--;
+				} else {
+					ECFG.cx = 0;
+				}
+			}
 			break;
 		case KEY_ARROW_RIGHT:
-			ECFG.cx++;
+			if (ECFG.cx < ECFG.cols) {
+				ECFG.cx++;
+			} else {
+				if (ECFG.cy != (ECFG.rows - 1)) {
+					ECFG.cx = 0;
+					ECFG.cy++;
+				} else {
+					ECFG.cx = ECFG.cols;
+				}
+			}
 			break;
 		case KEY_ARROW_UP:
-			ECFG.cy--;
+			if (ECFG.cy > 0) {
+				ECFG.cy--;
+			}
 			break;
 		case KEY_ARROW_DOWN:
-			ECFG.cy++;
+			if (ECFG.cy != (ECFG.rows - 1)) {
+				ECFG.cy++;
+			}
 			break;
 	}
 }
