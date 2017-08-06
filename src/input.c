@@ -11,7 +11,9 @@ enum keys {
 	KEY_ARROW_LEFT = 1000,
 	KEY_ARROW_RIGHT,
 	KEY_ARROW_UP,
-	KEY_ARROW_DOWN
+	KEY_ARROW_DOWN,
+	KEY_PAGE_UP,
+	KEY_PAGE_DOWN
 };
 
 void
@@ -25,6 +27,10 @@ inp_command(void)
             write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
             exit(0);
             break;
+		case KEY_PAGE_UP:
+			break;
+		case KEY_PAGE_DOWN:
+			break;
 		case KEY_ARROW_LEFT:
 			/* FALLTHROUGH */
 		case KEY_ARROW_RIGHT:
@@ -124,15 +130,29 @@ inp_read_key(void)
 			return '\x1b';
 
 		if (sq[0] == '[') {
-			switch (sq[1]) {
-				case 'A':
-					return KEY_ARROW_UP;
-				case 'B':
-					return KEY_ARROW_DOWN;
-				case 'C':
-					return KEY_ARROW_RIGHT;
-				case 'D':
-					return KEY_ARROW_LEFT;
+			if (sq[1] >= '0' && sq[1] <= '9') {
+				if (read(STDIN_FILENO, &sq[2], 1) != 1)
+					return '\x1b';
+
+				if (sq[2] == '~') {
+					switch (sq[1]) {
+						case '5':
+							return KEY_PAGE_UP;
+						case '6':
+							return KEY_PAGE_DOWN;
+					}
+				}
+			} else {
+				switch (sq[1]) {
+					case 'A':
+						return KEY_ARROW_UP;
+					case 'B':
+						return KEY_ARROW_DOWN;
+					case 'C':
+						return KEY_ARROW_RIGHT;
+					case 'D':
+						return KEY_ARROW_LEFT;
+				}
 			}
 		}
 
