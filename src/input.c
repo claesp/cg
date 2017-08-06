@@ -7,11 +7,17 @@
 #include "screen.h"
 
 #define KEY_CTRL(k) ((k) & 0x1f)
+enum keys {
+	KEY_ARROW_LEFT = 1000,
+	KEY_ARROW_RIGHT,
+	KEY_ARROW_UP,
+	KEY_ARROW_DOWN
+};
 
 void
 inp_command(void)
 {
-    char c = inp_read_key();
+    int c = inp_read_key();
 
     switch (c) {
         case KEY_CTRL('q'):
@@ -19,13 +25,13 @@ inp_command(void)
             write(STDOUT_FILENO, SCR_ESC_CUR_TL, 3);
             exit(0);
             break;
-		case 'w':
+		case KEY_ARROW_LEFT:
 			/* FALLTHROUGH */
-		case 's':
+		case KEY_ARROW_RIGHT:
 			/* FALLTHROUGH */
-		case 'a':
+		case KEY_ARROW_UP:
 			/* FALLTHROUGH */
-		case 'd':
+		case KEY_ARROW_DOWN:
 			inp_move_cur(c);
 			break;
     }
@@ -58,25 +64,25 @@ inp_enable_raw(void)
 }
 
 void
-inp_move_cur(char key)
+inp_move_cur(int key)
 {
 	switch (key) {
-		case 'a':
+		case KEY_ARROW_LEFT:
 			ECFG.cx--;
 			break;
-		case 'd':
+		case KEY_ARROW_RIGHT:
 			ECFG.cx++;
 			break;
-		case 'w':
+		case KEY_ARROW_UP:
 			ECFG.cy--;
 			break;
-		case 's':
+		case KEY_ARROW_DOWN:
 			ECFG.cy++;
 			break;
 	}
 }
 
-char
+int
 inp_read_key(void)
 {
     int n;
@@ -87,5 +93,29 @@ inp_read_key(void)
             die("read");
     }
 
-    return c;
+	if (c == '\x1b') {
+		char sq[3];
+
+		if (read(STDIN_FILENO, &sq[0], 1) != 1)
+			return '\x1b';
+		if (read(STDIN_FILENO, &sq[1], 1) != 1)
+			return '\x1b';
+
+		if (sq[0] == '[') {
+			switch (sq[1]) {
+				case 'A':
+					return KEY_ARROW_UP;
+				case 'B':
+					return KEY_ARROW_DOWN;
+				case 'C':
+					return KEY_ARROW_RIGHT;
+				case 'D':
+					return KEY_ARROW_LEFT;
+			}
+		}
+
+		return '\x1b';
+	} else {
+		return c;
+	}
 }
